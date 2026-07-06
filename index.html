@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Game</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="economy-bar">
+    <div class="economy-item">
+      <span>💰</span>
+      <span id="gold-display">0</span>
+    </div>
+    <div class="economy-item">
+      <span>💎</span>
+      <span id="diamond-display">0</span>
+    </div>
+  </div>
+
+  <div id="screen-menu" class="screen menu-screen">
+    <div class="menu-container">
+      <div class="menu-header">
+        <div class="logo-icon">⚔️</div>
+        <h1 class="game-title">Card Battle</h1>
+        <p class="game-subtitle">Colecione, evolua e batalhe</p>
+      </div>
+      
+      <div class="menu-buttons">
+        <button class="menu-btn btn-battle" onclick="Game.startBattle()">
+          <span class="btn-icon">⚔️</span>
+          <span class="btn-text">Batalhar</span>
+        </button>
+        <button class="menu-btn btn-collection" onclick="Game.showCollection()">
+          <span class="btn-icon">📚</span>
+          <span class="btn-text">Coleção</span>
+        </button>
+        <button class="menu-btn btn-shop" onclick="Game.showShop()">
+          <span class="btn-icon">🛒</span>
+          <span class="btn-text">Loja</span>
+        </button>
+      </div>
+      
+      <button class="menu-btn btn-reset" onclick="Game.resetAccount()">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Resetar Conta</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="screen-battle" class="screen battle-screen hidden">
+    <div class="battle-header">
+      <span id="round-display">Rodada: 1</span>
+      <span id="turn-display">Seu Turno</span>
+      <button class="btn" onclick="Game.backToMenu()">Sair</button>
+    </div>
+
+    <div class="battle-field">
+      <div class="board-combined">
+        <h3>Campo Inimigo</h3>
+        <div class="board-with-bench">
+          <div id="enemy-board" class="cards-row"></div>
+          <div id="enemy-bench" class="bench-side"></div>
+        </div>
+      </div>
+
+      <div class="board-combined">
+        <h3>Seu Campo</h3>
+        <div class="board-with-bench">
+          <div id="player-board" class="cards-row"></div>
+          <div id="player-bench" class="bench-side"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="battle-log" class="battle-log"></div>
+  </div>
+
+  <div id="screen-collection" class="screen collection-screen hidden">
+    <div class="battle-header">
+      <h2>Sua Coleção</h2>
+      <button class="btn" onclick="Game.backToMenu()">Voltar</button>
+    </div>
+    <div id="collection-grid" class="collection-grid"></div>
+  </div>
+
+  <div id="screen-shop" class="screen shop-screen hidden">
+    <div class="battle-header">
+      <h2>Loja de Cartas Raras</h2>
+      <button class="btn" onclick="Game.backToMenu()">Voltar</button>
+    </div>
+    <div id="shop-cards" class="shop-items"></div>
+  </div>
+
+  <div id="screen-pack-opening" class="screen pack-opening-screen hidden">
+    <h2>Pack Aberto!</h2>
+    <div id="pack-cards" class="pack-cards"></div>
+    <div class="pack-actions">
+      <button class="btn btn-secondary" onclick="Game.backToShop()">Voltar à Loja</button>
+      <button class="btn btn-primary" onclick="Game.openNewPack()">Abrir Novo Pack</button>
+    </div>
+  </div>
+
+  <div id="result-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="result-text">Resultado</h2>
+      <p id="result-reward">Recompensa</p>
+      <button class="btn" onclick="Game.backToMenu()">Continuar</button>
+    </div>
+  </div>
+
+  <div id="card-detail-modal" class="modal hidden" onclick="UI.closeCardDetail(event)">
+    <div class="modal-content card-detail-content" onclick="event.stopPropagation()">
+      <button class="card-detail-close" onclick="UI.closeCardDetail()">✕</button>
+      <div id="card-detail-body"></div>
+    </div>
+  </div>
+
+  <div id="dice-modal" class="modal hidden">
+    <div class="modal-content dice-modal-content">
+      <h2 class="dice-title">🎲 Quem começa?</h2>
+      <div class="dice-arena">
+        <div class="dice-player">
+          <div class="dice-label">Você</div>
+          <div class="dice-container">
+            <div id="dice-player" class="dice-3d">
+              <div class="dice-cube">
+                <div class="dice-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="dice-face face-2">
+                  <div class="dot top-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-3">
+                  <div class="dot top-left"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dice-glow"></div>
+            <div class="dice-shadow"></div>
+          </div>
+          <div id="dice-player-roll" class="dice-result">-</div>
+        </div>
+        <div class="dice-vs">VS</div>
+        <div class="dice-player">
+          <div class="dice-label">Inimigo</div>
+          <div class="dice-container">
+            <div id="dice-enemy" class="dice-3d">
+              <div class="dice-cube">
+                <div class="dice-face face-1">
+                  <div class="dot center"></div>
+                </div>
+                <div class="dice-face face-2">
+                  <div class="dot top-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-3">
+                  <div class="dot top-left"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-4">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-5">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot center"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+                <div class="dice-face face-6">
+                  <div class="dot top-left"></div>
+                  <div class="dot top-right"></div>
+                  <div class="dot middle-left"></div>
+                  <div class="dot middle-right"></div>
+                  <div class="dot bottom-left"></div>
+                  <div class="dot bottom-right"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dice-glow"></div>
+            <div class="dice-shadow"></div>
+          </div>
+          <div id="dice-enemy-roll" class="dice-result">-</div>
+        </div>
+      </div>
+      <div id="dice-message" class="dice-message">Rolando dados...</div>
+      <button id="dice-continue-btn" class="btn dice-continue-btn hidden" onclick="UI.continueAfterDice()">Iniciar Batalha</button>
+    </div>
+  </div>
+
+  <script src="cards/cardDatabase.js"></script>
+  <script src="js/card.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/economy.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
